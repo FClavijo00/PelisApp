@@ -10,6 +10,9 @@ import { ImagenPipe } from './imagen.pipe';
   ],
   imports: [
     CommonModule
+  ],
+  exports: [
+    ImagenPipe,
   ]
 })
 export class PipesModule { }
