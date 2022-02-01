@@ -14,14 +14,27 @@ SwiperCore.use([Autoplay, Keyboard, Pagination, Scrollbar, Zoom]);
 export class Tab1Page implements OnInit {
 
   peliculasRecientes: Pelicula[] = [];
+  peliculasPopulares: Pelicula[] = [];
 
   constructor( private moviesService: MoviesService ) {}
 
   ngOnInit(): void {
       this.moviesService.getFeature().subscribe( (resp: RespuestaMDB) => {
-        console.log('Resp:', resp);
         this.peliculasRecientes = resp.results;
       });
+
+      this.getPopulares();
+  }
+
+  cargarMas() {
+    this.getPopulares();
+  }
+
+  getPopulares() {
+    this.moviesService.getPopular().subscribe( resp => {
+      const arrTemp = [...this.peliculasPopulares, ...resp.results];
+      this.peliculasPopulares = arrTemp;
+    });
   }
 
 }

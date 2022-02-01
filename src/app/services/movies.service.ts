@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { RespuestaMDB } from '../interfaces/interfaces';
+import { PeliculaDetalle, RespuestaMDB, RespuestaCredits } from '../interfaces/interfaces';
 
 
 const URL = environment.url;
@@ -13,6 +13,8 @@ const apiKey = environment.apiKey;
 })
 export class MoviesService {
 
+  private popularesPage = 0;
+
   constructor( private http: HttpClient ) { }
 
   private ejecutarQuery<T>(query: string) {
@@ -22,6 +24,21 @@ export class MoviesService {
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
+  buscarPelicula(texto: string) {
+    return this.ejecutarQuery(`/search/movie?query=${texto}`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  getPopular() {
+
+    this.popularesPage++;
+
+    const query = `/discover/movie?sort_by=popularity.desc&page=${ this.popularesPage }`;
+    return this.ejecutarQuery<RespuestaMDB>(query);
+
+  }
+
+    // eslint-disable-next-line @typescript-eslint/member-ordering
   getFeature() {
 
     const today = new Date();
@@ -40,5 +57,17 @@ export class MoviesService {
     const fin = `${ today.getFullYear() }-${ monthString }-${ lastDay }`;
 
     return this.ejecutarQuery<RespuestaMDB>(`/discover/movie?primary_release_date.gte=${ inicio }&primary_release_date.lte=${ fin }`);
+
   }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  getPeliculaDetalle(id: number) {
+    return this.ejecutarQuery<PeliculaDetalle>(`/movie/${ id }?a=1`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  getActoresPelicula(id: number) {
+    return this.ejecutarQuery<RespuestaCredits>(`/movie/${ id }/credits?a=1`);
+  }
+
 }
