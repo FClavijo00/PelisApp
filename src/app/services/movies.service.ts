@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { PeliculaDetalle, RespuestaMDB, RespuestaCredits } from '../interfaces/interfaces';
+import { PeliculaDetalle, RespuestaMDB, RespuestaCredits, Genre } from '../interfaces/interfaces';
 
 
 const URL = environment.url;
@@ -14,6 +14,8 @@ const apiKey = environment.apiKey;
 export class MoviesService {
 
   private popularesPage = 0;
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  generos: Genre[] = [];
 
   constructor( private http: HttpClient ) { }
 
@@ -68,6 +70,18 @@ export class MoviesService {
   // eslint-disable-next-line @typescript-eslint/member-ordering
   getActoresPelicula(id: number) {
     return this.ejecutarQuery<RespuestaCredits>(`/movie/${ id }/credits?a=1`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  cargarGeneros(): Promise<Genre[]> {
+    return new Promise( resolve => {
+      this.ejecutarQuery(`/genre/movie/list?a=1`)
+        .subscribe( resp => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      this.generos = resp['genres'];
+      resolve(this.generos);
+      });
+    });
   }
 
 }
